@@ -1,0 +1,75 @@
+// Importez les variables Bootstrap et surchargez-les si nécessaire
+@import 'node_modules/bootstrap/scss/functions';
+@import 'node_modules/bootstrap/scss/variables';
+@import 'node_modules/bootstrap/scss/mixins';
+
+// Vos variables personnalisées
+$theme-colors: (
+  "primary": #007bff,
+  "success": #28a745,
+  "info": #17a2b8,
+  "warning": #ffc107,
+  "danger": #dc3545,
+  "light": #f8f9fa,
+  "dark": #343a40
+);
+
+// Importez le reste de Bootstrap
+@import 'node_modules/bootstrap/scss/bootstrap';
+
+// Configuration and helpers
+@import
+  'abstracts/variables',
+  'abstracts/mixins';
+
+@import 
+ 'variables/variables',
+ 'variables/theme-variables';
+ 
+// Base stuff
+@import
+  'base/common',
+  'base/animation',
+  'base/typography';
+
+// Components
+@import
+  'components/buttons',
+  'components/form',
+  'components/slider',
+  'components/noUISlider',
+  'components/card',
+  'components/tabs',
+  'components/misc',
+  'components/banners';
+
+  // Themes
+@import
+  'themes/default';
+
+
+// Layout-related sections
+@import
+  'layout/header',
+  'layout/navigation',
+  'layout/sidebar',
+  'layout/footer',
+  'layout/spacing',
+  'layout/auth';
+
+// Page-specific styles
+@import
+  'pages/pages',
+  'pages/blog',
+  'pages/job-single',
+  'pages/candidate-single-1',
+  'pages/job-listing-grid',
+  'pages/job-listing-grid-2',
+  'pages/job-listing-list',
+  'pages/employers',
+  'pages/homepage2',
+  'pages/homepage3';
+
+  // Responsive
+@import
+  'layout/responsive';
