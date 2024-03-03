@@ -547,11 +547,32 @@
     display: block;
     width: 160px;
     height: 160px;
-    border: 2px solid $color-primary;
-    border-radius: 10px;
     cursor: pointer;
-    padding-top: 35px;
-    border-radius: 50%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column; 
+
+    &.img_rounded {
+        border: 2px solid $color-primary;
+        border-radius: 50%;
+    }
+
+    &.img_carre {
+        border: 2px dotted $color-primary;
+        border-radius: 4;
+    }
+
+    &.size-md {
+        width: 164px;
+        height: 164px;
+    }
+
+    &.size-sm {
+        width: 104px;
+        height: 104px;
+    }
 
     &:hover {
         .close {
@@ -572,14 +593,29 @@
 
     img {
         &.selected-image {
-            width: 160px;
-            height: 160px;
             position: absolute;
-            border-radius: 50%;
             left: 0;
-            top: 0;
+            top: 2;
             margin: auto;
             right: 0;
+
+            &.select_img_rounded {
+                border-radius: 50%;
+            }
+
+            &.select_img_carre {
+                
+            }
+
+            &.img_size-md {
+                width: 160px;
+                height: 160px;
+            }
+
+            &.img_size-sm {
+                width: 100px;
+                height: 100px;
+            }
         }
     }
 }
@@ -612,3 +648,66 @@
 .fade:not(.show) {
     display: none;
 }
+
+.title-bold {
+    min-height: 30px;
+}
+
+.sticky {
+    position: fixed;
+    bottom: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(255, 255, 255);
+    box-shadow: rgba(41, 48, 78, 0.15) 0px 1px 7px 0px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-items: center;
+}
+
+.custom-select {
+    select {
+      // Hide the default dropdown arrow
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-color: transparent;
+      border: none; // You can add border styles if needed
+      padding: 5px 10px; // Adjust padding as needed
+      border-radius: 4px; // Add border-radius if needed
+      background-image: url('your-dropdown-arrow-icon.png'); // Add your dropdown arrow icon
+      background-repeat: no-repeat;
+      background-position: right center;
+      background-size: 12px; // Adjust size as needed
+      cursor: pointer;
+      outline: none;
+  
+      &:hover {
+        // Add hover styles if needed
+      }
+    }
+  
+    option {
+      background-repeat: no-repeat;
+      background-size: 20px; // Adjust size as needed
+      padding-left: 30px; // Adjust padding as needed to accommodate the icon
+    }
+  
+    .custom-select__text {
+        background-image: url('/images/icons/bed.png') ;
+    }
+    // Define styles for each option
+    option[value="alimentation"] {
+      background-image: url('/images/icons/bed.png') ;
+    }
+  
+    option[value="option2"] {
+      background-image: url('option2-icon.png');
+    }
+  
+    // Add more options as needed
+  }
+  

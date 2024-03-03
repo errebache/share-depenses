@@ -38,7 +38,7 @@ function Lists() {
                           <div className="row">
                             <div className="col-lg-5">
                               <h6 className="card-job-top--info-heading">
-                                <a href="job-single.html">Voyage</a>
+                                <span>Voyage</span>
                               </h6>
                               <span className="card-job-top--location">
                                 <i className="fi-rr-marker"></i> my balance
@@ -48,24 +48,21 @@ function Lists() {
                               </span>
                             </div>
                             <div className="col-lg-7 text-lg-end">
-                              <a
-                                href="job-grid-2.html"
+                              <button
                                 className="btn btn-small background-blue-light mr-5"
                               >
                                 <i className="bi bi-x-lg"></i>
-                              </a>
-                              <a
-                                href="job-grid.html"
+                              </button>
+                              <button
                                 className="btn btn-small background-urgent btn-pink mr-5"
                               >
                                 <i className="bi bi-person-fill-add"></i>
-                              </a>
-                              <a
-                                href="job-grid.html"
+                              </button>
+                              <button
                                 className="btn btn-small background-6 disc-btn"
                               >
                                 <i className="bi bi-currency-exchange"></i>
-                              </a>
+                              </button>
                             </div>
                           </div>
                         </div>
@@ -104,24 +101,21 @@ function Lists() {
                               </span>
                             </div>
                             <div className="col-lg-7 text-lg-end">
-                              <a
-                                href="job-grid-2.html"
+                              <button
                                 className="btn btn-small background-blue-light mr-5"
                               >
                                 <i className="bi bi-x-lg"></i>
-                              </a>
-                              <a
-                                href="job-grid.html"
+                              </button>
+                              <button
                                 className="btn btn-small background-urgent btn-pink mr-5"
                               >
                                 <i className="bi bi-person-fill-add"></i>
-                              </a>
-                              <a
-                                href="job-grid.html"
+                              </button>
+                              <button
                                 className="btn btn-small background-6 disc-btn"
                               >
                                 <i className="bi bi-currency-exchange"></i>
-                              </a>
+                              </button>
                             </div>
                           </div>
                         </div>

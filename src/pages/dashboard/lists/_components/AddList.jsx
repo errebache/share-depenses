@@ -2,12 +2,19 @@ import { useState } from "react";
 import * as yup from "yup";
 import { useFieldArray, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import ImageInput from "./ImageInput";
+import ImageInput from "../../../../components/common/_components/ImageInput";
 
 function AddList() {
   const [imageUrl, setImageUrl] = useState("");
   const [formData, setFormData] = useState({});
   const [currency, setCurrency] = useState("eur");
+
+  const formSchema = {
+    name: yup.string()
+    .required("Name of member is required")
+    .min(3, "Too short")
+    .max(50, "Too long"),
+  };
 
   const schema = yup.object().shape({
     name: yup
@@ -16,6 +23,11 @@ function AddList() {
       .min(2, "Too short")
       .max(50, "Too long"),
     currency: yup.string().required("Currency is required"),
+    groups: yup
+    .array()
+    .of(yup.object().shape(formSchema))
+    .required("Must have fields")
+    .min(1, "Minimum of 1 field")
   });
 
   const defaultValue = {
@@ -36,6 +48,7 @@ function AddList() {
   } = useForm({
     defaultValues: defaultValue,
     resolver: yupResolver(schema),
+    mode: "onChange"
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -86,7 +99,7 @@ function AddList() {
                       <div className="form">
                         <div className="row">
                           <div className="col-md-12 text-center my-5">
-                            <ImageInput onChange={handleImageChange} />
+                            <ImageInput onChange={handleImageChange} format={true} size="md"/>
                           </div>
                           <div className="col-md-12">
                             <div className="form-group">
@@ -133,9 +146,9 @@ function AddList() {
                                   {fields.map((user, i) => (
                                     <li
                                       key={user.id}
-                                      className="d-flex flex-row my-2"
                                     >
-                                      <input
+                                    <div className="d-flex flex-row my-2">  
+                                    <input
                                         {...register(`groups[${i}].name`)}
                                         className="flex-fill mr-5"
                                         placeholder="Name"
@@ -157,9 +170,10 @@ function AddList() {
                                           className="bi bi-x-circle"
                                         ></i>
                                       </button>
+                                    </div>
                                       {errors.groups?.length &&
                                         errors.groups[i]?.name && (
-                                          <p style={{ color: "red" }}>
+                                          <p className="d-block" style={{ color: "red" }}>
                                             {errors.groups[i].name.message}
                                           </p>
                                         )}

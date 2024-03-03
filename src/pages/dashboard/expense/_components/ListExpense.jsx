@@ -13,9 +13,9 @@ function ListExpense() {
     <section className="section-box">
       <div className="container">
         <div className="row">
-          <div className="col-lg-8 col-md-12 col-12 mx-auto">
-            <ul className="nav nav-pills mtb-15" id="pills-tab" role="tablist">
-              {/* Home Tab */}
+          <div className="col-lg-8 col-md-12 col-12 mx-auto d-flex">
+            <ul className="nav nav-pills d-flex justify-content-center text-center mx-auto mtb-15" id="pills-tab" role="tablist">
+              {/* Transaction Tab */}
               <li className="nav-item" role="presentation">
                 <button
                   className={`nav-link ${activeTab === "transaction" ? "active" : ""}`}
@@ -28,7 +28,7 @@ function ListExpense() {
                   Transactions
                 </button>
               </li>
-              {/* Profile Tab */}
+              {/* Balance Tab */}
               <li className="nav-item" role="presentation">
                 <button
                   className={`nav-link ${
@@ -43,7 +43,7 @@ function ListExpense() {
                   Balance
                 </button>
               </li>
-              {/* Contact Tab */}
+              {/* Regleent Tab */}
               <li className="nav-item" role="presentation">
                 <button
                   className={`nav-link ${
@@ -60,8 +60,8 @@ function ListExpense() {
               </li>
             </ul>
           </div>
-          <div className="col-md-4 col-sm-6 text-end">
-                <NavLink to="/lists/addtransaction" className="btn btn-primary mt-2">
+          <div className="col-md-4 col-sm-6">
+                <NavLink to="/lists/addexpense" className="btn btn-primary mt-2">
                   <i className="bi bi-plus-circle mx-2"></i>
                 </NavLink>
           </div>
@@ -70,8 +70,8 @@ function ListExpense() {
       <div  className="divider"></div>
       <div className="tab-content mt-30" id="pills-tabContent">
         <div className="container">
-          <div className="row">
-            <div className="col-lg-8 col-md-12 col-12 mx-auto">
+          <div className="row justify-content-center">
+            <div className="col-lg-8 col-md-8 col-12">
               <div
                 className={`tab-pane fade ${
                   activeTab === "transaction" ? "show active" : ""

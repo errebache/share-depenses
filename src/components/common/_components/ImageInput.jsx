@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function ImageInput({ onChange }) {
+function ImageInput({onChange, format, size , className}) {
   const [imageUrl, setImageUrl] = useState("");
   const [formData, setFormData] = useState({
     image: null,
@@ -43,17 +43,17 @@ function ImageInput({ onChange }) {
   };
 
   return (
-    <div className="file-input">
+    <div className={`file-input ${className}`}>
       <input
         type="file"
         id="fileInput"
         className="file-input__input"
         onChange={handleImageChange}
       />
-      <label htmlFor="fileInput" className="file-input__label">
+      <label htmlFor="fileInput" className={`file-input__label ${format ? "img_rounded" : "img_carre"} size-${size}`}>
         <div className="file-input__icon">
           {imageUrl ? (
-            <img src={imageUrl} alt="Selected" className="selected-image" />
+            <img src={imageUrl} alt="Selected" className={`selected-image ${format ? "select_img_rounded" : "select_img_carre"} img_size-${size}`} />
           ) : (
             <i className="bi bi-camera"></i>
           )}
@@ -66,9 +66,8 @@ function ImageInput({ onChange }) {
               onClick={(e) => handleRemoveImage(e)}
             ></i>
             </span>
-         
-            
           ) : (
+            size == "md" &&
             "Choisir une image"
           )}
         </span>
