@@ -130,3 +130,30 @@
         }
     }
 }
+
+.author {
+    position: relative;
+    display: flex;
+    flex: 0 0 auto;
+    -webkit-box-align: center;
+    -webkit-box-pack: center;
+}
+
+.paidby {
+    position: relative; 
+    .paidby-icon {
+        position: absolute;
+        width: 36px;
+        bottom: -15px;
+        color: #ffffff;
+        font-size: 10px;
+        right: 0px;
+        background: #00c070;
+        text-align: center;
+        height: 15px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}

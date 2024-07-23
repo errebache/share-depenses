@@ -5,6 +5,7 @@
     font-size: $font-lg;
     line-height: 1;
     transition: 0.2s;
+    cursor: pointer;
     &.btn-default {
         color: $color-white;
         background-color: $color-brand;
@@ -19,6 +20,14 @@
         &:hover {
             color: $color-white;
         }
+    }
+    &.btn-goback {
+        color: $color-white;
+        background-color: $blue;
+        &:hover {
+            color: $color-white;
+            background-color: $color-brand;
+        } 
     }
 }
 
@@ -42,8 +51,15 @@
     font-size: $font-sm;
 }
 .background-blue-light {
+    background-color: $background-blue-light;
     &:hover {
         background-color: $background-blue-light;
+    }
+}
+.background-red {
+    background-color: $background-red;
+    &:hover {
+        background-color: $background-red;
     }
 }
 .btn-pink {

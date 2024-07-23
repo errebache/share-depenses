@@ -1,7 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { getCookie } from "../../components/common/utils/getCookies";
+import { API_AUTH } from "./apis";
 
-const API_AUTH = "/api/auth";
 
 export async function login(credentials) {
   try {
@@ -22,7 +22,7 @@ export async function login(credentials) {
   } catch (error) {
     console.error("Error during signin:", error);
     // Une erreur s'est produite pendant la requête
-    return { success: false, user: null, error: "Oops une erreur est survenue" };
+    return { auth: false, message: "No token provided." }
   }
 }
 
@@ -57,7 +57,7 @@ export async function getCurrentUser() {
   try {
     const token = getCookie("token");
     if (!token) {
-      return { success: false, user: null, error: "Token not found" };
+      return null;
     }
 
     const response = await fetch(`${API_AUTH}/current`);
@@ -77,7 +77,7 @@ export async function getCurrentUser() {
   } catch (error) {
     console.error("Error fetching current user:", error);
     // Retourne un objet d'erreur générique en cas d'exception
-    return { success: false, user: null, error: "Oops une erreur est survenue" };
+    return { auth: false, message: "No token provided." }
   }
 }
 

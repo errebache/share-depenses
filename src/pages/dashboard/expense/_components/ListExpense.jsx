@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 import Balance from "./balance/Balance";
 import Transactions from "./transaction/Transactions";
 
-function ListExpense() {
+function ListExpense({ expenses }) {
   const [activeTab, setActiveTab] = useState("transaction");
+  const { idList } = useParams();
 
   const handleSetActiveTab = (tab) => {
     setActiveTab(tab);
@@ -14,11 +15,17 @@ function ListExpense() {
       <div className="container">
         <div className="row">
           <div className="col-lg-8 col-md-12 col-12 mx-auto d-flex">
-            <ul className="nav nav-pills d-flex justify-content-center text-center mx-auto mtb-15" id="pills-tab" role="tablist">
+            <ul
+              className="nav nav-pills d-flex justify-content-center text-center mx-auto mtb-15"
+              id="pills-tab"
+              role="tablist"
+            >
               {/* Transaction Tab */}
               <li className="nav-item" role="presentation">
                 <button
-                  className={`nav-link ${activeTab === "transaction" ? "active" : ""}`}
+                  className={`nav-link ${
+                    activeTab === "transaction" ? "active" : ""
+                  }`}
                   id="pills-home-tab"
                   type="button"
                   role="tab"
@@ -61,13 +68,13 @@ function ListExpense() {
             </ul>
           </div>
           <div className="col-md-4 col-sm-6">
-                <NavLink to="/lists/addexpense" className="btn btn-primary mt-2">
-                  <i className="bi bi-plus-circle mx-2"></i>
-                </NavLink>
+              <NavLink to={`/lists/${idList}/addexpense`} className="btn btn-primary mt-2">
+               <i className="bi bi-plus-circle mx-2"></i> Ajouter une dépense
+            </NavLink>
           </div>
         </div>
       </div>
-      <div  className="divider"></div>
+      <div className="divider"></div>
       <div className="tab-content mt-30" id="pills-tabContent">
         <div className="container">
           <div className="row justify-content-center">
@@ -80,7 +87,9 @@ function ListExpense() {
                 role="tabpanel"
                 aria-labelledby="pills-home-tab"
               >
-               <Transactions />
+                {expenses.map((expense, index) => (
+                  <Transactions key={index} expense={expense} />
+                ))}
               </div>
               <div
                 className={`tab-pane fade ${

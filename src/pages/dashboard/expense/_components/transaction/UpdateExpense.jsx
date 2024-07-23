@@ -1,23 +1,11 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import * as yup from "yup";
 import { useFieldArray, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import ImageInput from "../../../../../components/common/_components/ImageInput";
 import StickySection from "../../../../../components/common/_components/StickySection";
-import { addExpense } from "../../../../../services/apis/expense";
-import { useParams } from "react-router-dom";
-import Select from "../../../../../components/common/_components/select";
-import {
-  categories,
-  currencyOptions,
-  users
-} from "../../../../../components/common/_components/data";
-import SelectComponent from "../../../../../components/common/_components/select";
-import { DataContext } from "../../../../../context/DataContext";
 
-function AddExpense() {
-  const { idList } = useParams();
-  const { usersList } = useContext(DataContext);
+function UpdateExpense() {
   const [imageUrl, setImageUrl] = useState("");
   const [formData, setFormData] = useState({});
   const [currency, setCurrency] = useState("eur");
@@ -25,7 +13,7 @@ function AddExpense() {
   const [participants, setParticipants] = useState([
     { name: "mouhcine", amount: 0 },
     { name: "imane", amount: 0 },
-    { name: "hamza", amount: 0 },
+    { name: "hamza", amount: 0 }
   ]);
 
   const formSchema = {
@@ -42,26 +30,26 @@ function AddExpense() {
       .required("Description is required")
       .min(2, "Too short")
       .max(50, "Too long"),
-    // paidBy: yup.string().required("Payer is required"),
+    paidBy: yup.string().required("Payer is required"),
     amount: yup
       .number()
       .typeError("Amount must be a number")
       .required("Amount is required")
       .positive("Amount must be positive"),
-    // splitAmong: yup.array().of(
-    //   yup.object().shape({
-    //     name: yup
-    //       .string()
-    //       .required("Participant name is required")
-    //       .min(3, "Too short")
-    //       .max(50, "Too long"),
-    //     amount: yup
-    //       .number()
-    //       .typeError("Amount must be a number")
-    //       .required("Amount is required")
-    //       .positive("Amount must be positive"),
-    //   })
-    // ),
+    splitAmong: yup.array().of(
+      yup.object().shape({
+        name: yup
+          .string()
+          .required("Participant name is required")
+          .min(3, "Too short")
+          .max(50, "Too long"),
+        amount: yup
+          .number()
+          .typeError("Amount must be a number")
+          .required("Amount is required")
+          .positive("Amount must be positive")
+      })
+    )
   });
 
   const defaultValue = {
@@ -72,7 +60,7 @@ function AddExpense() {
     splitAmong: [],
     image: "",
     categorie: "",
-    createdAt: "",
+    createdAt: ""
   };
 
   const {
@@ -124,9 +112,7 @@ function AddExpense() {
   };
 
   const submit = (data) => {
-    console.log(usersList);
     const newItem = { ...data, image: imageUrl };
-    addExpense(idList, newItem);
     console.log(newItem);
   };
 
@@ -142,7 +128,7 @@ function AddExpense() {
               <div className="row">
                 <div className="ccol-lg-11 mx-auto">
                   <h4 className="text-center mt-10 mb-10">
-                    Ajouter une depense
+                    Modifier une depense
                   </h4>
                 </div>
               </div>
@@ -172,7 +158,7 @@ function AddExpense() {
                         <div className="col-md-3">
                           <h5 className="flex-fill title-bold mt-10 mb-10 title-bold"></h5>
                           <div className="form-group">
-                            {/* <select
+                            <select
                               className="form-select form-control mb-3"
                               onChange={handleCurrencyChange}
                               {...register("categorie")}
@@ -180,14 +166,7 @@ function AddExpense() {
                               <option value="Categorie">Categorie </option>
                               <option value="Alimentation">Alimentation</option>
                               <option value="Voyage">Voyage</option>
-                            </select> */}
-                            <SelectComponent
-                              onChange={handleCurrencyChange}
-                              {...register("categorie")}
-                              options={categories}
-                              type="image"
-                            />
-                            {/* <SelectComponent options={currencyOptions} /> */}
+                            </select>
                           </div>
                         </div>
                         <div className="col-md-3">
@@ -195,7 +174,7 @@ function AddExpense() {
                             choose puyer
                           </h5>
                           <div className="form-group">
-                            {/* <select
+                            <select
                               className="form-select form-control mb-3"
                               onChange={handleCurrencyChange}
                               {...register("paidBy")}
@@ -203,18 +182,12 @@ function AddExpense() {
                               <option value="userId_1">Mouhcine</option>
                               <option value="userId_2">Imane</option>
                               <option value="userId_3">Hamza</option>
-                            </select> */}
-                             <SelectComponent
-                              onChange={handleCurrencyChange}
-                              {...register("members")}
-                              options={users}
-                              type="image"
-                            />
-                            {/* {errors.paidBy && (
+                            </select>
+                            {errors.paidBy && (
                               <p style={{ color: "red" }}>
                                 {errors.paidBy.message}
                               </p>
-                            )} */}
+                            )}
                           </div>
                         </div>
                       </div>
@@ -278,8 +251,42 @@ function AddExpense() {
                           </h5>
                         </div>
                       </div>
-                      <div className="row">
-                        {participants.map((participant, index) => (
+                      {/* <div className="row">
+                        <div className="col-md-5">
+                          <div className="form-group">
+                            <label>Mouhcine</label>
+                            <input
+                              type="text"
+                              className="form-control mb-3"
+                              placeholder="30"
+                              {...register("name")}
+                            />
+                            {errors.name && (
+                              <p style={{ color: "red" }}>
+                                {errors.name.message}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                        <div className="col-md-5">
+                          <div className="form-group">
+                            <label>Imane</label>
+                            <input
+                              type="text"
+                              className="form-control mb-3"
+                              placeholder="20"
+                              {...register("name")}
+                            />
+                            {errors.name && (
+                              <p style={{ color: "red" }}>
+                                {errors.name.message}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div> */}
+                      <div className="row">            
+                      {participants.map((participant, index) => (
                           <div key={index} className="col-md-5">
                             <div className="form-group">
                               <label>{participant.name}</label>
@@ -287,17 +294,44 @@ function AddExpense() {
                                 type="number"
                                 className="form-control mb-3"
                                 value={participant.amount}
-                                onChange={(e) =>
-                                  handleChangeParticipantAmount(
-                                    index,
-                                    parseFloat(e.target.value)
-                                  )
-                                }
+                                onChange={(e) => handleChangeParticipantAmount(index, parseFloat(e.target.value))}
                               />
                               {/* Error handling */}
                             </div>
                           </div>
-                        ))}
+                      ))}
+                        {/* <div className="col-md-5">
+                          <div className="form-group">
+                            <label>Mouhcine</label>
+                            <input
+                              type="text"
+                              className="form-control mb-3"
+                              placeholder="30"
+                              {...register("name")}
+                            />
+                            {errors.name && (
+                              <p style={{ color: "red" }}>
+                                {errors.name.message}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                        <div className="col-md-5">
+                          <div className="form-group">
+                            <label>Imane</label>
+                            <input
+                              type="text"
+                              className="form-control mb-3"
+                              placeholder="20"
+                              {...register("name")}
+                            />
+                            {errors.name && (
+                              <p style={{ color: "red" }}>
+                                {errors.name.message}
+                              </p>
+                            )}
+                          </div>
+                        </div> */}
                       </div>
                       <StickySection offset={5}>
                         <div className="row">
@@ -329,4 +363,4 @@ function AddExpense() {
   );
 }
 
-export default AddExpense;
+export default UpdateExpense;

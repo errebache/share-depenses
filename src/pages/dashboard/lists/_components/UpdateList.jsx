@@ -1,28 +1,19 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import * as yup from "yup";
 import { useFieldArray, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import ImageInput from "../../../../components/common/_components/ImageInput";
-import { addList } from "../../../../services/apis/lists";
-import { AuthContext } from "../../../../context";
-import { useNavigate } from "react-router-dom";
-import { useFetchData } from "../../../../hooks/useFetchData";
-import { API_LIST } from "../../../../services/apis/apis";
-import StickySection from "../../../../components/common/_components/StickySection";
 
-function AddList() {
-  const navigate = useNavigate();
+function UpdateList() {
   const [imageUrl, setImageUrl] = useState("");
   const [formData, setFormData] = useState({});
   const [currency, setCurrency] = useState("eur");
-  const { user, handleAddList } = useContext(AuthContext);
 
   const formSchema = {
-    name: yup
-      .string()
-      .required("Name of member is required")
-      .min(3, "Too short")
-      .max(50, "Too long"),
+    name: yup.string()
+    .required("Name of member is required")
+    .min(3, "Too short")
+    .max(50, "Too long"),
   };
 
   const schema = yup.object().shape({
@@ -33,10 +24,10 @@ function AddList() {
       .max(50, "Too long"),
     currency: yup.string().required("Currency is required"),
     groups: yup
-      .array()
-      .of(yup.object().shape(formSchema))
-      .required("Must have Members")
-      .min(1, "Minimum 1 of memebrs"),
+    .array()
+    .of(yup.object().shape(formSchema))
+    .required("Must have fields")
+    .min(1, "Minimum of 1 field")
   });
 
   const defaultValue = {
@@ -57,7 +48,7 @@ function AddList() {
   } = useForm({
     defaultValues: defaultValue,
     resolver: yupResolver(schema),
-    mode: "onChange",
+    mode: "onChange"
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -85,22 +76,10 @@ function AddList() {
   };
 
   const submit = (values) => {
-    let obj = [];
-    const newItem = {
-      ...values,
-      createdBy: user,
-      groups: values.groups,
-      // groups: [
-      //   ...values.groups,
-      //   {
-      //     name: user.name,
-      //     email: user.email,
-      //   },
-      // ],
-      image: imageUrl,
-    };
-    obj = { ...newItem, image: imageUrl };
-    handleAddList(obj);
+    const newItem = { ...values, image: imageUrl };
+    console.log(newItem);
+    setFormData(newItem);
+    console.log(formData);
   };
 
   return (
@@ -112,7 +91,7 @@ function AddList() {
             onSubmit={handleSubmit(submit)}
           >
             <div className="info">
-              <h4 className="mb-15">Créer une liste</h4>
+              <h4 className="mb-15">Modifier la liste</h4>
               <div className="row">
                 <div className="col-lg-11 mx-auto">
                   <div className="row">
@@ -120,11 +99,7 @@ function AddList() {
                       <div className="form">
                         <div className="row">
                           <div className="col-md-12 text-center my-5">
-                            <ImageInput
-                              onChange={handleImageChange}
-                              format={true}
-                              size="md"
-                            />
+                            <ImageInput onChange={handleImageChange} format={true} size="md"/>
                           </div>
                           <div className="col-md-12">
                             <div className="form-group">
@@ -160,7 +135,7 @@ function AddList() {
                             </div>
                           </div>
                           <div className="col-md-12">
-                            {!errors.name?.types?.required && (
+                          {!errors.name?.types?.required && (
                               <>
                                 <label className="mb-5 d-flex flex-row justify-content-center align-items-center">
                                   <span className="flex-fill">
@@ -169,37 +144,36 @@ function AddList() {
                                 </label>
                                 <ul className="mb-3">
                                   {fields.map((user, i) => (
-                                    <li key={user.id}>
-                                      <div className="d-flex flex-row my-2">
-                                        <input
-                                          {...register(`groups[${i}].name`)}
-                                          className="flex-fill mr-5"
-                                          placeholder="Name"
-                                          type="text"
-                                        />
-                                        <input
-                                          {...register(`groups[${i}].email`)}
-                                          className="flex-fill mr-5"
-                                          placeholder="Email address (optionel)"
-                                          type="text"
-                                        />
-                                        <button
-                                          type="button"
-                                          onClick={() => deleteUser(i)}
-                                          className="btn btn-priamry"
-                                        >
-                                          <i
-                                            style={{ color: "red" }}
-                                            className="bi bi-x-circle"
-                                          ></i>
-                                        </button>
-                                      </div>
+                                    <li
+                                      key={user.id}
+                                    >
+                                    <div className="d-flex flex-row my-2">  
+                                    <input
+                                        {...register(`groups[${i}].name`)}
+                                        className="flex-fill mr-5"
+                                        placeholder="Name"
+                                        type="text"
+                                      />
+                                      <input
+                                        {...register(`groups[${i}].email`)}
+                                        className="flex-fill mr-5"
+                                        placeholder="Email address (optionel)"
+                                        type="text"
+                                      />
+                                      <button
+                                        type="button"
+                                        onClick={() => deleteUser(i)}
+                                        className="btn btn-priamry"
+                                      >
+                                        <i
+                                          style={{ color: "red" }}
+                                          className="bi bi-x-circle"
+                                        ></i>
+                                      </button>
+                                    </div>
                                       {errors.groups?.length &&
                                         errors.groups[i]?.name && (
-                                          <p
-                                            className="d-block"
-                                            style={{ color: "red" }}
-                                          >
+                                          <p className="d-block" style={{ color: "red" }}>
                                             {errors.groups[i].name.message}
                                           </p>
                                         )}
@@ -214,28 +188,19 @@ function AddList() {
                                   <i className="bi bi-plus-circle mx-2"></i>
                                   Ajouter une personne
                                 </button>
-                                <span className="group-error">
-                                  {errors.groups && (
-                                    <p style={{ color: "red" }}>
-                                      {errors.groups.message}
-                                    </p>
-                                  )}
-                                </span>
                               </>
                             )}
                           </div>
-                          <StickySection offset={5}>
-                            <div className="col-md-12 text-center">
-                              <div className="form-group">
-                                <button
-                                  disabled={isSubmitting}
-                                  className="btn btn-primary my-2"
-                                >
-                                  Sauvegarder
-                                </button>
-                              </div>
+                          <div className="col-md-12 text-center">
+                            <div className="form-group">
+                              <button
+                                disabled={isSubmitting}
+                                className="btn btn-primary my-2"
+                              >
+                                Sauvegarder
+                              </button>
                             </div>
-                          </StickySection>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -250,4 +215,4 @@ function AddList() {
   );
 }
 
-export default AddList;
+export default UpdateList;

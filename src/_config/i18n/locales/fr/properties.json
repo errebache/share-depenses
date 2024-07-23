@@ -3,7 +3,9 @@
     "home": "Accueil",
     "lists": "Listes",
     "addlist": "Ajouter une liste",
+    "editlist": "Modifier la liste",
     "expense": "Dépense",
-    "AddExpense": "Ajouter une dépense"
+    "addexpense": "Ajouter une depense",
+    "transactions": "Trans"
   }
   

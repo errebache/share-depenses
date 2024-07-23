@@ -15,7 +15,7 @@ function FeatureList() {
         <div className="row mt-60">
           <div className="col-lg-3 col-md-6 col-sm-6 col-12 mb-md-30">
             <div
-              className="card-none-bd hover-up wow animate__animated animate__fadeInUp"
+              className="card-none-bd"
               data-wow-delay=".0s"
             >
               <div className="block-image">
@@ -37,7 +37,7 @@ function FeatureList() {
           </div>
           <div className="col-lg-3 col-md-6 col-sm-6 col-12 mb-md-30">
             <div
-              className="card-none-bd hover-up wow animate__animated animate__fadeInUp"
+              className="card-none-bd"
               data-wow-delay=".1s"
             >
               <div className="block-image">
@@ -59,7 +59,7 @@ function FeatureList() {
           </div>
           <div className="col-lg-3 col-md-6 col-sm-6 col-12 mb-md-30">
             <div
-              className="card-none-bd hover-up wow animate__animated animate__fadeInUp"
+              className="card-none-bd"
               data-wow-delay=".2s"
             >
               <div className="block-image">
@@ -81,7 +81,7 @@ function FeatureList() {
           </div>
           <div className="col-lg-3 col-md-6 col-sm-6 col-12">
             <div
-              className="card-none-bd hover-up wow animate__animated animate__fadeInUp"
+              className="card-none-bd"
               data-wow-delay=".3s"
             >
               <div className="block-image">

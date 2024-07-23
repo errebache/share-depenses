@@ -3,5 +3,6 @@
     "home": "Home",
     "lists": "Lists",
     "expense": "Expense",
-    "AddExpense": "Add Expense"
+    "addexpense": "Add Expense",
+    "transactions": "Trans"
 }

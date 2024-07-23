@@ -1,41 +1,61 @@
-// Breadcrumbs.js
-
-import React from "react";
-import { useLocation, Link, NavLink } from "react-router-dom";
-import { useTranslation } from "react-i18next"; // Importez useTranslation depuis react-i18next
+import { useTranslation } from "react-i18next";
+import { Link, useLocation, useParams } from "react-router-dom";
 
 function Breadcrumbs() {
   const { t } = useTranslation();
-  const { pathname } = useLocation();
-  const pathnames = pathname
-    .split("/")
-    .filter((x) => x && !/^[0-9a-fA-F]{24}$/.test(x));
+  const location = useLocation();
+  const { idList } = useParams();
+  const pathnames = location.pathname.split('/').filter((x) => x && !/^[0-9a-fA-F]{24}$/.test(x));
+
+  function goBack() {
+    window.history.back();
+  }
+
+  const buttonStyle = {
+    backgroundColor: '#007bff',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    padding: '10px 20px',
+    cursor: 'pointer',
+  };
 
   return (
-    <section className="section-box">
+    <>
+     <section className="section-box">
       <div className="breacrumb-cover">
         <div className="container">
           <div className="row">
             <div className="col-lg-8 col-md-12 col-12">
               <ul className="breadcrumbs">
-                {pathnames.map((name, index) => {
-                  const routeTo = `/${pathnames.slice(0, index + 1).join(">")}`;
-                  const isLast = index === pathnames.length - 1;
-                  const pageTitle = t(name);
-                  return isLast ? (
-                    <li key={name}>{pageTitle}</li>
-                  ) : (
-                    <li key={name}>
-                      <Link to={routeTo}>{pageTitle}</Link>
-                    </li>
-                  );
-                })}
+                {pathnames.map((pathname, index) => (
+                <li key={pathname}>
+                  <Link to={`/${pathnames.slice(0, index + 1).join('/')}`}>
+                    {t(pathname)}
+                  </Link>
+                </li>
+              ))}
               </ul>
             </div>
           </div>
         </div>
       </div>
     </section>
+    <section>
+      <div className="container">
+          <div className="row">
+             <div>
+                { idList && <button
+                className="btn btn-primary" 
+                onClick={goBack} 
+              >
+                <i className="bi bi-chevron-left"></i>
+              </button> }
+             </div>
+          </div>          
+      </div>
+    </section>
+    </>
   );
 }
 

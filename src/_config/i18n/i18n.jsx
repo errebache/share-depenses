@@ -17,7 +17,7 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    lng: 'en', // langue par défaut
+    lng: 'fr', // langue par défaut
     interpolation: {
       escapeValue: false, // not needed for react!!
     },
