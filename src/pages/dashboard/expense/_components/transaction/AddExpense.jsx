@@ -1,6 +1,6 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import * as yup from "yup";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import ImageInput from "../../../../../components/common/_components/ImageInput";
 import StickySection from "../../../../../components/common/_components/StickySection";
@@ -10,31 +10,64 @@ import Select from "../../../../../components/common/_components/select";
 import {
   categories,
   currencyOptions,
-  users
+  users,
 } from "../../../../../components/common/_components/data";
 import SelectComponent from "../../../../../components/common/_components/select";
 import { DataContext } from "../../../../../context/DataContext";
+import { useFetchData } from "../../../../../hooks/useFetchData";
+import { API_USERS } from "../../../../../services/apis/apis";
 
 function AddExpense() {
   const { idList } = useParams();
   const { usersList } = useContext(DataContext);
+  const [members, setMembers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorFetch, setErrorFetch] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
-  const [formData, setFormData] = useState({});
   const [currency, setCurrency] = useState("eur");
-  const [amount, setAmount] = useState(0);
-  const [participants, setParticipants] = useState([
-    { name: "mouhcine", amount: 0 },
-    { name: "imane", amount: 0 },
-    { name: "hamza", amount: 0 },
-  ]);
+  const [amount, setAmount] = useState("");
+  const [value, setValue] = useState(0);
+  const [participants, setParticipants] = useState([]);
 
-  const formSchema = {
-    name: yup
-      .string()
-      .required("Name of member is required")
-      .min(3, "Too short")
-      .max(50, "Too long"),
-  };
+  useEffect(() => {
+    const fetchMembers = async () => {
+      try {
+        const response = await fetch(`${API_USERS}/usersList/${idList}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch members');
+        }
+        const data = await response.json();
+        setMembers(data);
+      } catch (err) {
+        setErrorFetch(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMembers();
+  }, [idList]);
+
+  useEffect(() => {
+    console.log("Checking members:", members);
+    if (Array.isArray(members) && members.length > 0) {
+      members.forEach(member => {
+        console.log(member);
+      });
+      const updatedParticipants = members.map(member => ({
+        userId: member._id,
+        label: member.name,
+        value: member.name,
+        image: '',
+        amount: 0,
+      }));
+      setParticipants(updatedParticipants);
+      console.log("Participants updated:", updatedParticipants);
+    } else {
+      console.log("Members is not a valid array or it is empty.");
+    }
+  }, [members]);
+  
 
   const schema = yup.object().shape({
     description: yup
@@ -42,26 +75,11 @@ function AddExpense() {
       .required("Description is required")
       .min(2, "Too short")
       .max(50, "Too long"),
-    // paidBy: yup.string().required("Payer is required"),
     amount: yup
       .number()
       .typeError("Amount must be a number")
       .required("Amount is required")
       .positive("Amount must be positive"),
-    // splitAmong: yup.array().of(
-    //   yup.object().shape({
-    //     name: yup
-    //       .string()
-    //       .required("Participant name is required")
-    //       .min(3, "Too short")
-    //       .max(50, "Too long"),
-    //     amount: yup
-    //       .number()
-    //       .typeError("Amount must be a number")
-    //       .required("Amount is required")
-    //       .positive("Amount must be positive"),
-    //   })
-    // ),
   });
 
   const defaultValue = {
@@ -99,35 +117,85 @@ function AddExpense() {
   };
 
   const handleTotalAmountChange = (e) => {
-    const newTotalAmount = parseFloat(e.target.value);
-    console.log(newTotalAmount);
-    setAmount(newTotalAmount);
+    const value = e.target.value;
+    const newTotalAmount = parseFloat(value) || "";    
+    if (!isNaN(newTotalAmount)) {
+      console.log("New total amount:", newTotalAmount);
+      setAmount(newTotalAmount);
 
-    const remainingParticipants = participants.length - 1;
-    const amountPerParticipant = newTotalAmount / remainingParticipants;
+      if (participants.length > 0) {
+        const amountPerParticipant = parseFloat(newTotalAmount / participants.length).toFixed(3) * 10;
+        console.log("Amount per participant:", amountPerParticipant);
 
-    const updatedParticipants = participants.map((participant, index) => {
-      if (index === 0) {
-        return participant; // Ignorer le premier participant
+        const updatedParticipants = participants.map(participant => ({
+          ...participant,
+          amount: parseFloat(amountPerParticipant),
+        }));
+
+        setParticipants(updatedParticipants);
+        console.log("Updated participants:", updatedParticipants);
       } else {
-        return { ...participant, amount: amountPerParticipant };
+        const updatedParticipants = participants.map(participant => ({
+          ...participant,
+          amount: '',
+        }));
+        setParticipants(updatedParticipants);
       }
-    });
-
-    setParticipants(updatedParticipants);
+    } else {
+      console.log("Invalid input for total amount:", e.target.value);
+    }
   };
+  
+  const handleParticipantAmountChange = (index, e) => {
+    const value = e.target.value;
+    const newAmount = parseFloat(value) || '';
 
-  const handleChangeParticipantAmount = (index, value) => {
     const updatedParticipants = [...participants];
-    updatedParticipants[index].amount = value;
+    updatedParticipants[index].amount = newAmount;
+
+    // Calculate the total amount set in the inputs
+    const totalAmount = updatedParticipants.reduce((sum, participant) => sum + participant.amount, 0);
+
+    // Recalculate the amount for other participants if totalAmount is not zero
+    if (totalAmount !== 0) {
+      const otherParticipantsCount = participants.length - 1;
+      const remainingAmount = totalAmount - newAmount;
+      const amountPerOtherParticipant = remainingAmount > 0 && otherParticipantsCount > 0 ? Math.round((remainingAmount / otherParticipantsCount) * 100) / 100 : 0;
+
+      for (let i = 0; i < updatedParticipants.length; i++) {
+        if (i !== index) {
+          updatedParticipants[i].amount = amountPerOtherParticipant;
+        }
+      }
+    }
+
     setParticipants(updatedParticipants);
+    setAmount(totalAmount);
   };
 
-  const submit = (data) => {
-    console.log(usersList);
-    const newItem = { ...data, image: imageUrl };
-    addExpense(idList, newItem);
-    console.log(newItem);
+
+
+  const submit = async (data) => {
+    const splitAmong = participants.map(participant => ({
+      userId: participant.userId,
+      amount: participant.amount,
+    }));
+
+    const newItem = { 
+      ...data, 
+      paidBy: "669d63b92d2322d0e96224ab",
+      list: idList,
+      category: "Food",
+      image: imageUrl,
+      splitAmong
+    };
+
+    try {
+      const response = await addExpense(idList, newItem);
+      console.log("Expense added successfully:", response);
+    } catch (error) {
+      console.error("Error submitting the form:", error);
+    }
   };
 
   return (
@@ -140,9 +208,9 @@ function AddExpense() {
           >
             <div className="info">
               <div className="row">
-                <div className="ccol-lg-11 mx-auto">
+                <div className="col-lg-11 mx-auto">
                   <h4 className="text-center mt-10 mb-10">
-                    Ajouter une depense
+                    Ajouter une dépense
                   </h4>
                 </div>
               </div>
@@ -159,7 +227,7 @@ function AddExpense() {
                             <input
                               type="text"
                               className="form-control mb-3"
-                              placeholder="depense"
+                              placeholder="dépense"
                               {...register("description")}
                             />
                             {errors.description && (
@@ -172,49 +240,25 @@ function AddExpense() {
                         <div className="col-md-3">
                           <h5 className="flex-fill title-bold mt-10 mb-10 title-bold"></h5>
                           <div className="form-group">
-                            {/* <select
-                              className="form-select form-control mb-3"
-                              onChange={handleCurrencyChange}
-                              {...register("categorie")}
-                            >
-                              <option value="Categorie">Categorie </option>
-                              <option value="Alimentation">Alimentation</option>
-                              <option value="Voyage">Voyage</option>
-                            </select> */}
                             <SelectComponent
                               onChange={handleCurrencyChange}
                               {...register("categorie")}
                               options={categories}
                               type="image"
                             />
-                            {/* <SelectComponent options={currencyOptions} /> */}
                           </div>
                         </div>
                         <div className="col-md-3">
                           <h5 className="flex-fill text-bold mt-10 mb-10 title-bold">
-                            choose puyer
+                            Choose payer
                           </h5>
                           <div className="form-group">
-                            {/* <select
-                              className="form-select form-control mb-3"
+                            <SelectComponent
                               onChange={handleCurrencyChange}
                               {...register("paidBy")}
-                            >
-                              <option value="userId_1">Mouhcine</option>
-                              <option value="userId_2">Imane</option>
-                              <option value="userId_3">Hamza</option>
-                            </select> */}
-                             <SelectComponent
-                              onChange={handleCurrencyChange}
-                              {...register("members")}
-                              options={users}
+                              options={participants}
                               type="image"
                             />
-                            {/* {errors.paidBy && (
-                              <p style={{ color: "red" }}>
-                                {errors.paidBy.message}
-                              </p>
-                            )} */}
                           </div>
                         </div>
                       </div>
@@ -225,12 +269,13 @@ function AddExpense() {
                               Amount
                             </h5>
                             <input
-                              type="text"
-                              className="form-control mb-3"
-                              placeholder="Amount"
-                              onChange={handleTotalAmountChange}
-                              {...register("amount")}
-                            />
+                                type="number"
+                                className="form-control mb-3"
+                                placeholder="Amount"
+                                autocomplete="off"
+                                onKeyDown={handleTotalAmountChange}
+                                {...register("amount")}
+                              />
                             {errors.amount && (
                               <p style={{ color: "red" }}>
                                 {errors.amount.message}
@@ -267,6 +312,7 @@ function AddExpense() {
                             format={false}
                             size="sm"
                             className="mt-30 ml-5"
+                            onChange={handleImageChange}
                           />
                         </div>
                       </div>
@@ -279,25 +325,19 @@ function AddExpense() {
                         </div>
                       </div>
                       <div className="row">
-                        {participants.map((participant, index) => (
-                          <div key={index} className="col-md-5">
-                            <div className="form-group">
-                              <label>{participant.name}</label>
-                              <input
-                                type="number"
-                                className="form-control mb-3"
-                                value={participant.amount}
-                                onChange={(e) =>
-                                  handleChangeParticipantAmount(
-                                    index,
-                                    parseFloat(e.target.value)
-                                  )
-                                }
-                              />
-                              {/* Error handling */}
-                            </div>
+                      {participants.map((participant, index) => (
+                        <div key={index} className="col-md-5">
+                          <div className="form-group">
+                            <label>{participant.label}</label>
+                            <input
+                              type="number"
+                              className="form-control mb-3"
+                              value={participant.amount}
+                              onChange={(e) => handleParticipantAmountChange(index, e)}
+                            />
                           </div>
-                        ))}
+                        </div>
+                      ))}
                       </div>
                       <StickySection offset={5}>
                         <div className="row">
