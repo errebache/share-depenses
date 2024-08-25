@@ -6,8 +6,6 @@ import LanguageSelector from "../../components/common/_components/LanguageSelect
 
 function Profil() {
   const { user } = useContext(AuthContext);
-  const [email, setEmail] = useState('mouhcine.errebache@gmail.com');
-  const [password, setPassword] = useState('initial password');
 
   // Example `onChange` handlers
   const handleEmailChange = (event) => {
